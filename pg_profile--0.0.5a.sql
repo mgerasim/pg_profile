@@ -858,7 +858,7 @@ BEGIN
 	FOR r_result IN c_dblist LOOP
       INSERT INTO temp_stat_user_tables
       SELECT s_id,r_result.datid,t.*
-      FROM dblink('dbname='||r_result.datname||' port='||r_result.port, 'select *,pg_relation_size(relid) relsize,0 relsize_diff from pg_catalog.pg_stat_user_tables')
+      FROM dblink('dbname='||r_result.datname||' port='||r_result.port ||' user='||r_result.current_user, 'select *,pg_relation_size(relid) relsize,0 relsize_diff from pg_catalog.pg_stat_user_tables')
       AS t (
          relid oid,
          schemaname name,
@@ -888,7 +888,7 @@ BEGIN
       
       INSERT INTO temp_stat_user_indexes
       SELECT s_id,r_result.datid,t.*
-      FROM dblink('dbname='||r_result.datname||' port='||r_result.port, 'select st.*,pg_relation_size(st.relid),0,(ix.indisunique or con.conindid IS NOT NULL) as indisunique
+      FROM dblink('dbname='||r_result.datname||' port='||r_result.port ||' user='||r_result.current_user, 'select st.*,pg_relation_size(st.relid),0,(ix.indisunique or con.conindid IS NOT NULL) as indisunique
 from pg_catalog.pg_stat_user_indexes st 
 join pg_catalog.pg_index ix on (ix.indexrelid = st.indexrelid) 
 left join pg_catalog.pg_constraint con on(con.conindid = ix.indexrelid and con.contype in (''p'',''u''))')
@@ -908,7 +908,7 @@ left join pg_catalog.pg_constraint con on(con.conindid = ix.indexrelid and con.c
       
       INSERT INTO temp_stat_user_functions
       SELECT s_id,r_result.datid,t.*
-      FROM dblink('dbname='||r_result.datname||' port='||r_result.port, 'select * from pg_catalog.pg_stat_user_functions')
+      FROM dblink('dbname='||r_result.datname||' port='||r_result.port ||' user='||r_result.current_user, 'select * from pg_catalog.pg_stat_user_functions')
       AS t (
          funcid oid,
          schemaname name,
@@ -920,7 +920,7 @@ left join pg_catalog.pg_constraint con on(con.conindid = ix.indexrelid and con.c
 
       INSERT INTO temp_statio_user_tables
       SELECT s_id,r_result.datid,t.*
-      FROM dblink('dbname='||r_result.datname||' port='||r_result.port, 'select *,pg_relation_size(relid),0 from pg_catalog.pg_statio_user_tables')
+      FROM dblink('dbname='||r_result.datname||' port='||r_result.port ||' user='||r_result.current_user, 'select *,pg_relation_size(relid),0 from pg_catalog.pg_statio_user_tables')
       AS t (
          relid oid,
          schemaname name,
@@ -939,7 +939,7 @@ left join pg_catalog.pg_constraint con on(con.conindid = ix.indexrelid and con.c
       
       INSERT INTO temp_statio_user_indexes
       SELECT s_id,r_result.datid,t.*
-      FROM dblink('dbname='||r_result.datname||' port='||r_result.port, 'select *,pg_relation_size(relid),0 from pg_catalog.pg_statio_user_indexes')
+      FROM dblink('dbname='||r_result.datname||' port='||r_result.port ||' user='||r_result.current_user, 'select *,pg_relation_size(relid),0 from pg_catalog.pg_statio_user_indexes')
       AS t (
          relid oid,
          indexrelid oid,
